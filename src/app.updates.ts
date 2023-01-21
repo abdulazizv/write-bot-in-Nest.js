@@ -29,9 +29,23 @@ export class AppUpdate {
     return this.appService.langRu(ctx)
   }
 
-  @Hears('')
+  @Hears("✅ Ro'yxatdan o'tish")
+  async registration(@Ctx() ctx:Context) {
+    return this.appService.registration(ctx,'UZB')
+  }
+  @Hears('✅ Зарегистрироваться')
+  async register(@Ctx() ctx:Context) {
+    return this.appService.registration(ctx,'RUS')
+  }
+
+  @Action('defaultsave')
+  async saveName(@Ctx() ctx:Context) {
+    return this.appService
+  }
+
   @On('message')
   async message(@Ctx() ctx:Context) {
     return this.appService
   }
+
 }

@@ -60,45 +60,76 @@ export class AppService {
     const user = await this.userRepository.findOne({
       where: { user_id: String(ctx.from.id) },
     });
-    if (!user) {
-      await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
-      await ctx.reply(`Iltimos, <b>start</b> tugmasini bosing! 👇`, {
-        parse_mode: "HTML",
-        ...Markup.keyboard([["/start"]])
-          .oneTime()
-          .resize(),
-      });
-    }
-    if (ctx.message.contact.user_id !== ctx.from.id) {
-      await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
-      await ctx.reply(
-        `Iltimos o'zingizni raqamingizni yuboring, <b>"Telefon raqamni yuborish"</b> tugmasini bosing! `,
-        {
+    if(user.user_lang == 'UZB') {
+      if (!user) {
+        await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
+        await ctx.reply(`Iltimos, <b>start</b> tugmasini bosing! 👇`, {
           parse_mode: "HTML",
-          ...Markup.keyboard([
-            [Markup.button.contactRequest("📞 Telefon raqamni yuborish")],
-          ])
+          ...Markup.keyboard([["/start"]])
             .oneTime()
             .resize(),
-        }
+        });
+      }
+      if (ctx.message.contact.user_id !== ctx.from.id) {
+        await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
+        await ctx.reply(
+          `Iltimos o'zingizni raqamingizni yuboring, <b>"Telefon raqamni yuborish"</b> tugmasini bosing! `,
+          {
+            parse_mode: "HTML",
+            ...Markup.keyboard([
+              [Markup.button.contactRequest("📞 Telefon raqamni yuborish")],
+            ])
+              .oneTime()
+              .resize(),
+          }
+        );
+      }
+      await this.userRepository.update(
+        {
+          phone_number: ctx.message.contact.phone_number,
+          status: true,
+          last_state: "real_name",
+        },
+        { where: { user_id: String(ctx.from.id) } }
       );
+      await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
+      await ctx.reply(`<b>Sizga murojaat qilish uchun quyidagi ismingizni tanlang:</b>`, {
+        parse_mode: "HTML",
+        ...Markup.inlineKeyboard([Markup.button.callback(`Men ${ctx.from.username} ismini tanlayman`,'defaultsave')])
+      });
+      await ctx.replyWithHTML('Yoki haqiqiy ismingizni kiriting:')
+    } else {
+      if (ctx.message.contact.user_id !== ctx.from.id) {
+        await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
+        await ctx.reply(
+          `Пожалуйста, пришлите свой номер, <b>"Отправить номер телефона"</b> нажать на кнопку! `,
+          {
+            parse_mode: "HTML",
+            ...Markup.keyboard([
+              [Markup.button.contactRequest("📞 Отправить номер телефона")],
+            ])
+              .oneTime()
+              .resize(),
+          }
+        );
+      }
+      await this.userRepository.update(
+        {
+          phone_number: ctx.message.contact.phone_number,
+          status: true,
+          last_state: "real_name",
+        },
+        { where: { user_id: String(ctx.from.id) } }
+      );
+      await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
+      await ctx.reply(`<b>Пожалуйста, выберите свое имя ниже, чтобы связаться с вами:</b>`, {
+        parse_mode: "HTML",
+        ...Markup.inlineKeyboard([Markup.button.callback(`Я "${ctx.from.username}" выбираю имя`,'defaultsave')])
+      });
+      await ctx.replyWithHTML('Или введите свое настоящее имя:')
     }
-    await this.userRepository.update(
-      {
-        phone_number: ctx.message.contact.phone_number,
-        status: true,
-        last_state: "main",
-      },
-      { where: { user_id: String(ctx.from.id) } }
-    );
-    await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
-    await ctx.reply(`Rahmat`, {
-      parse_mode: "HTML",
-    });
   }
 
-  async registration(ctx:Context,lang:String){
-  }
   async onStop(ctx: Context) {
     const user = await this.userRepository.findOne({
       where: { user_id: String(ctx.from.id) },
@@ -159,5 +190,54 @@ export class AppService {
             .resize()
         })
     }
+  }
+  async registration(ctx:Context,lang:String) {
+    if (lang == 'UZB') {
+      await ctx.reply(
+        `Iltimos o'zingizni raqamingizni yuboring, <b>"Telefon raqamni yuborish"</b> tugmasini bosing! `,
+        {
+          parse_mode: "HTML",
+          ...Markup.keyboard([
+            [Markup.button.contactRequest("📞 Telefon raqamni yuborish")],
+          ])
+            .oneTime()
+            .resize(),
+        }
+       );
+      }
+    else {
+      await ctx.reply(
+        ` Пожалуйста, пришлите свой номер, нажмите <b>"Отправить номер телефона"</b>! `,
+        {
+          parse_mode: "HTML",
+          ...Markup.keyboard([
+            [Markup.button.contactRequest("📞 Отправить номер телефона")],
+          ])
+            .oneTime()
+            .resize(),
+        }
+      );
+    }
+  }
+
+  async saveName(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    await this.userRepository.update({
+      real_name:`${ctx.message}`,
+      last_state:'ads_phone_number'
+    },{
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    await ctx.reply(`<b>Siz bilan bog'lanish uchun quyidagi telefon raqamingizni tanlang:</b>`,{
+      parse_mode:'HTML',
+      ...Markup.keyboard([Markup.button.callback(`Men ${user.phone_number} raqamini tanlayman`,'savedefaultphone')])
+    })
+    await ctx.replyWithHTML('Yoki boshqa ishlab turgan telefon raqam kiriting (namuna: 931234567):')
   }
 }
