@@ -40,12 +40,16 @@ export class AppUpdate {
 
   @Action('defaultsave')
   async saveName(@Ctx() ctx:Context) {
-    return this.appService
+    return this.appService.saveName(ctx);
   }
 
+  @Action('savedefaultphone')
+  async defaultSavePhone(@Ctx() ctx:Context) {
+    return this.appService.defaultSavePhone(ctx)
+  }
   @On('message')
   async message(@Ctx() ctx:Context) {
-    return this.appService
+    return this.appService.onMessage(ctx);
   }
 
 }

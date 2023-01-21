@@ -4,6 +4,7 @@ import { InjectBot } from "nestjs-telegraf";
 import { Context, Markup, Telegraf } from "telegraf";
 import { MyBotName } from "./app.constants";
 import { User } from "./models/user.model";
+import { mainmenu } from "./helpers/main_menu";
 
 @Injectable()
 export class AppService {
@@ -234,10 +235,86 @@ export class AppService {
         user_id:`${ctx.from.id}`
       }
     })
-    await ctx.reply(`<b>Siz bilan bog'lanish uchun quyidagi telefon raqamingizni tanlang:</b>`,{
-      parse_mode:'HTML',
-      ...Markup.keyboard([Markup.button.callback(`Men ${user.phone_number} raqamini tanlayman`,'savedefaultphone')])
+    if(user.user_lang == 'UZB') {
+      await ctx.reply(`<b>Siz bilan bog'lanish uchun quyidagi telefon raqamingizni tanlang:</b>`, {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback(`Men ${user.phone_number} raqamini tanlayman`, 'savedefaultphone')])
+      })
+      await ctx.replyWithHTML('Yoki boshqa ishlab turgan telefon raqam kiriting (namuna: 931234567):')
+    } else {
+      await ctx.reply(`<b>Выберите свой номер телефона ниже, чтобы связаться с вами:</b>`, {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback(`я выбираю ${user.phone_number} номер`, 'savedefaultphone')])
+      })
+      await ctx.replyWithHTML('Или введите другой рабочий номер телефона (пример: 931234567):')
+    }
+  }
+
+  async onMessage(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
     })
-    await ctx.replyWithHTML('Yoki boshqa ishlab turgan telefon raqam kiriting (namuna: 931234567):')
+    if(user.last_state === "real_name") {
+      if('text' in ctx.message) {
+        await this.userRepository.update({
+          real_name: `${ctx.message.text}`,
+          last_state: 'ads_phone_number'
+        }, {
+          where: {
+            user_id: `${ctx.from.id}`
+          }
+        })
+      }
+      if(user.user_lang == 'UZB') {
+        await ctx.reply(`<b>Siz bilan bog'lanish uchun quyidagi telefon raqamingizni tanlang:</b>`, {
+          parse_mode: 'HTML',
+          ...Markup.inlineKeyboard([Markup.button.callback(`Men ${user.phone_number} raqamini tanlayman`, 'savedefaultphone')])
+        })
+        await ctx.reply('Yoki boshqa ishlab turgan telefon raqam kiriting (namuna: 931234567):')
+      } else {
+        await ctx.reply(`<b>Выберите свой номер телефона ниже, чтобы связаться с вами:</b>`, {
+          parse_mode: 'HTML',
+          ...Markup.inlineKeyboard([Markup.button.callback(`я выбираю ${user.phone_number} номер`, 'savedefaultphone')])
+        })
+        await ctx.reply('Или введите другой рабочий номер телефона (пример: 931234567):')
+      }
+    } else if(user.last_state === 'ads_phone_number'){
+        if('text' in ctx.message) {
+          await this.userRepository.update({
+            ads_phone_number: `${ctx.message.text}`,
+            last_state: 'finish'
+          }, {
+            where: {
+              user_id: `${ctx.from.id}`
+            }
+          })
+        }
+      if(user.user_lang == 'UZB') {
+        return mainmenu(ctx,'UZB')
+      } else {
+        return mainmenu(ctx,'RUS')
+      }
+    }
+  }
+  async defaultSavePhone(ctx:Context){
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id: `${ctx.from.id}`
+      }
+    })
+    await this.userRepository.update({
+      last_state:"finish"
+    },{
+      where: {
+        user_id: `${ctx.from.id}`
+      }
+    })
+    if(user.user_lang === 'UZB'){
+      return mainmenu(ctx,'UZB')
+    } else {
+      return mainmenu(ctx,'RUS')
+    }
   }
 }
