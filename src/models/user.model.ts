@@ -13,7 +13,7 @@ interface UserAttr {
 @Table({ tableName: 'user', timestamps: false })
 export class User extends Model<User, UserAttr> {
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement:true,
     unique: true,

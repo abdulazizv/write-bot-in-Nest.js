@@ -1,0 +1,69 @@
+Assalomu alaykum! | Здравствуйте!
+Tilni tanlang | Выберите язык:
+
+1.null
+2.start
+🇺🇿 O'zbek tili
+
+Siz «Lady Taxi» botidan ilk marta foydalanayotganingiz uchun, bir martalik ro'yxatdan o'tishingiz lozim!
+
+✅ Ro'yxatdan o'tish
+
+Telefon raqamingizni kiriting
+
+Sizga murojaat qilish uchun quyidagi ismingizni tanlang:  ||  Yoki haqiqiy ismingizni kiriting:
+
+--- Men "Jamalov" ismini tanlayman.
+
+Siz bilan bog'lanish uchun quyidagi telefon raqamingizni tanlang: || Yoki boshqa ishlab turgan telefon raqam kiriting (namuna: 931234567):
+
+-- Men "998949174127" raqamini tanlayman
+
+Siz muvaffaqqiyatli ro'yxatdan o'tdingiz!
+«Lady Taxi» xizmatlaridan foydalanishingiz mumkin!
+
+
+//===============================================================================
+
+
+start ->    til so'radi knopka chiqdi ozbek tili rus tili
+
+
+ozbek tili tanlandi -> bir martalik royhatdan otish soraldi royhatdan otish
+
+
+royhatdan otish telefon raqam kirtish soraldi btn  telefon raqam kiritish
+
+tel yuborish bosildi - >
+Sizga murojaat qilish uchun quyidagi ismingizni tanlang:  ||  Yoki haqiqiy ismingizni kiriting:
+--- Men "Jamalov" ismini tanlayman.
+men haqiqiy ismimni yozdim
+
+telefon raqam tanlash soraldi ->
+Siz bilan bog'lanish uchun quyidagi telefon raqamingizni tanlang: || Yoki boshqa ishlab turgan telefon raqam kiriting (namuna: 931234567):
+-- Men "998949174127" raqamini tanlayman
+men ozimni nomerimni kiritdim
+
+
+Siz muvaffaqqiyatli ro'yxatdan o'tdingiz!
+«Lady Taxi» xizmatlaridan foydalanishingiz mumkin!
+btn lar tortta
+taksi chaqirish == yetkazib berish == profil == doimiy manzillar
+
+
+profil knopkasi bosilganda ->
+btn inline  ismni ozgartirish == telefon raqamni ozgartirish == doimiy manzillarni ozgartirish == tilni ozgartirish ==
+== taksi chaqirish tartibi == foydalanuvchi shartnomasi == lady taxi xizmatiga boglanish  == asosiy sahifa
+
+
+user ====
+id user_id phone_number first_name
+last_name username last_state user_lang
+ads_phone_number real_name message_id createdAt updatedAt
+
+
+driver ===
+id user_id phone_number first_name
+last_name username last_state user_lang work_phone_number
+car_model car_number car_color car_photo work_status
+last_lat last_lon last_state  createdAt updatedAt

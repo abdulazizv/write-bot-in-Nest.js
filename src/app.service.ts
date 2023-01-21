@@ -26,11 +26,12 @@ export class AppService {
       }
       await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
       await ctx.reply(
-        `Iltimos, <b>"Telefon raqamni yuborish"</b> tugmasini bosing! 👇`,
+        `Assalomu alaykum! | Здравствуйте!
+              Tilni tanlang | Выберите язык:`,
         {
           parse_mode: "HTML",
           ...Markup.keyboard([
-            [Markup.button.contactRequest("📞 Telefon raqamni yuborish")],
+            ["🇺🇿 UZB","🇷🇺 РУС"],
           ])
             .oneTime()
             .resize(),
@@ -38,7 +39,7 @@ export class AppService {
       );
     } else {
       await this.userRepository.update(
-        { last_state: "main" },
+        { last_state: "start" },
         { where: { user_id: String(ctx.from.id) } }
       );
 
