@@ -1,4 +1,4 @@
-import { Action, Command, Ctx, On, Start, Update } from 'nestjs-telegraf';
+import { Action, Command, Ctx, On, Start, Update,Hears } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { AppService } from './app.service';
 
@@ -14,12 +14,24 @@ export class AppUpdate {
   async onContact(@Ctx() ctx: Context) {
     return this.appService.onContact(ctx);
   }
-  @On('message')
-  async message(@Ctx() ctx:Context) {
-    return this.appService
-  }
   @Command('stop')
   async onStop(@Ctx() ctx: Context) {
     return this.appService.onStop(ctx);
+  }
+
+  @Hears("🇺🇿 O'zbek tili")
+  async uzLang(@Ctx() ctx: Context) {
+    return this.appService.langUz(ctx)
+  }
+
+  @Hears('🇷🇺 Русский язык')
+  async ruLang(ctx: Context) {
+    return this.appService.langRu(ctx)
+  }
+
+  @Hears('')
+  @On('message')
+  async message(@Ctx() ctx:Context) {
+    return this.appService
   }
 }

@@ -9,6 +9,9 @@ interface UserAttr {
   status: boolean;
   last_state: string;
   message_id: string;
+  user_lang:string;
+  real_name:string;
+  ads_phone_number:string;
 }
 @Table({ tableName: 'user', timestamps: false })
 export class User extends Model<User, UserAttr> {

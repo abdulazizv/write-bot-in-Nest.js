@@ -26,12 +26,11 @@ export class AppService {
       }
       await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
       await ctx.reply(
-        `Assalomu alaykum! | Здравствуйте!
-              Tilni tanlang | Выберите язык:`,
+        `Assalomu alaykum! | Здравствуйте!\nTilni tanlang | Выберите язык:`,
         {
           parse_mode: "HTML",
           ...Markup.keyboard([
-            ["🇺🇿 UZB","🇷🇺 РУС"],
+            ["🇺🇿 O'zbek tili","🇷🇺 Русский язык"],
           ])
             .oneTime()
             .resize(),
@@ -39,7 +38,7 @@ export class AppService {
       );
     } else {
       await this.userRepository.update(
-        { last_state: "start" },
+        { last_state: "lang" },
         { where: { user_id: String(ctx.from.id) } }
       );
 
@@ -48,6 +47,14 @@ export class AppService {
         parse_mode: "HTML",
       });
     }
+  }
+
+  async langUz(ctx:Context) {
+    return this.saveLang(ctx,'UZB')
+  }
+
+  async langRu(ctx: Context) {
+    return this.saveLang(ctx,'RUS')
   }
   async onContact(ctx: any) {
     const user = await this.userRepository.findOne({
@@ -90,6 +97,8 @@ export class AppService {
     });
   }
 
+  async registration(ctx:Context,lang:String){
+  }
   async onStop(ctx: Context) {
     const user = await this.userRepository.findOne({
       where: { user_id: String(ctx.from.id) },
@@ -121,6 +130,34 @@ export class AppService {
             .resize(),
         }
       );
+    }
+  }
+
+  async saveLang(ctx:Context, lang:String) {
+    await User.update({
+      user_lang: `${lang}`,
+      last_state:'registration'
+    },{
+      where:{
+        user_id: String(ctx.from.id)
+      }
+    })
+    if(lang === 'UZB') {
+      await ctx.reply(`Siz <b>«Lady Taxi»</b> botidan ilk marta foydalanayotganingiz uchun,
+  bir martalik ro'yxatdan o'tishingiz lozim!`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["✅ Ro'yxatdan o'tish"])
+          .oneTime()
+          .resize()
+      })
+    } else if(lang == 'RUS'){
+        await ctx.reply(`Так как вы впервые пользуетесь ботом <b>«Lady Taxi»</b>, 
+вам необходимо зарегистрироваться один раз!`,{
+          parse_mode:'HTML',
+          ...Markup.keyboard(["✅ Зарегистрироваться"])
+            .oneTime()
+            .resize()
+        })
     }
   }
 }
