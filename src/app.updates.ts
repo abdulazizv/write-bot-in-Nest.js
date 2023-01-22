@@ -56,6 +56,15 @@ export class AppUpdate {
   async defaultSavePhone(@Ctx() ctx:Context) {
     return this.appService.defaultSavePhone(ctx)
   }
+  @Action('changename')
+  async changeName(@Ctx() ctx:Context) {
+    return this.appService.changeName(ctx)
+  }
+
+  @Action('cancelling')
+  async cancellation(@Ctx() ctx:Context){
+    return this.appService.cancel(ctx);
+  }
 
   @On('message')
   async message(@Ctx() ctx:Context) {

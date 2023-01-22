@@ -19,14 +19,14 @@ export async function profilPart(ctx:Context,lang:String) {
     await ctx.reply("<b>Выберите нужный раздел : </b>", {
       parse_mode: 'HTML',
       ...Markup.inlineKeyboard([
-        Markup.button.callback(`👩 Изменение имени`, 'changename'),
-        Markup.button.callback("📱 Изменить номер телефона", "changephoneNumber"),
-        Markup.button.callback("🏘 Смена постоянного адреса", 'changeadress'),
-        Markup.button.callback("🌐 Изменить язык", 'changelanguage'),
-        Markup.button.callback('👩‍🦰 Порядок выдачи такси', 'ruleCallTaxy'),
-        Markup.button.callback('📄 Пользовательское Соглашение', 'contract'),
-        Markup.button.callback("☎️ Связаться со службой Lady Taxy", 'connectWithStaff'),
-        Markup.button.callback('🙎🏼‍♀️ Главная страница', 'mainpage')
+        [Markup.button.callback(`👩 Изменение имени`, 'changename')],
+        [Markup.button.callback("📱 Изменить номер телефона", "changephoneNumber")],
+        [Markup.button.callback("🏘 Смена постоянного адреса", 'changeadress')],
+        [Markup.button.callback("🌐 Изменить язык", 'changelanguage')],
+        [Markup.button.callback('👩‍🦰 Порядок выдачи такси', 'ruleCallTaxy')],
+        [Markup.button.callback('📄 Пользовательское Соглашение', 'contract')],
+        [Markup.button.callback("☎️ Связаться со службой Lady Taxy", 'connectWithStaff')],
+        [Markup.button.callback('🙎🏼‍♀️ Главная страница', 'mainpage')]
       ])
     })
   }

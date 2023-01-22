@@ -233,7 +233,7 @@ export class AppService {
       }
     })
     await this.userRepository.update({
-      real_name:`${ctx.message}`,
+      real_name:`${user.username}`,
       last_state:'ads_phone_number'
     },{
       where:{
@@ -301,6 +301,41 @@ export class AppService {
       } else {
         return mainmenu(ctx,'RUS')
       }
+    } else if(user.last_state == 'changeName') {
+      const user = await this.userRepository.findOne({
+        where:{
+          user_id:`${ctx.from.id}`
+        }
+      })
+      if('text' in ctx.message) {
+        await this.userRepository.update({
+          real_name:`${ctx.message.text}`,
+          last_state:'finish'
+        },{
+          where:{
+            user_id:`${ctx.from.id}`
+          }
+        })
+      }
+      if(user.user_lang == 'UZB') {
+        if ('text' in ctx.message) {
+          await ctx.replyWithHTML(`Ismingiz ${ctx.message.text} ga o'zgartirildi`,{
+            parse_mode:'HTML',
+            ...Markup.keyboard([["🚖 Taksi chaqirish 🙋‍♀️", "🚚 Yetkazib berish 🙋‍♀️"], ["🙎🏼‍♀️ Profil", "🏠 Doimiy manzillar"]])
+              .oneTime()
+              .resize()
+          })
+        }
+      } else {
+        if('text' in ctx.message) {
+          await ctx.replyWithHTML(`Ваше имя изменено на ${ctx.message.text}`,{
+            parse_mode:'HTML',
+            ...Markup.keyboard([["🚖 Вызвать такси 🙋‍♀️", "🚚 Доставка 🙋‍♀️"],["🙎🏼‍ профиль", "🏠 Постоянные адреса"]])
+              .oneTime()
+              .resize()
+          })
+        }
+      }
     }
   }
   async defaultSavePhone(ctx:Context){
@@ -328,6 +363,65 @@ export class AppService {
       return profilPart(ctx,'UZB')
     } else {
       return profilPart(ctx,'RUS')
+    }
+  }
+
+  async changeName(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    await this.userRepository.update({
+      last_state: 'changeName'
+    },{
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang == 'UZB'){
+      await ctx.reply('Ismingizni kiriting',{
+        parse_mode:'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback('🙅‍♀️ Bekor qilish','cancelling')])
+      })
+    } else if(user.user_lang == 'RUS') {
+      await ctx.reply('Введите ваше имя',{
+        parse_mode:'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback('🙅‍♀️ Отмена','cancelling')])
+      })
+    }
+  }
+  async cancel(ctx:Context) {
+    await this.userRepository.update({
+      last_state:'finish'
+    },{
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang === 'UZB') {
+      if('text' in ctx.message) {
+        await ctx.replyWithHTML(`Ismingiz ${ctx.message.text} ga o'zgartirildi`, {
+          parse_mode: 'HTML',
+          ...Markup.keyboard([["🚖 Taksi chaqirish 🙋‍♀️", "🚚 Yetkazib berish 🙋‍♀️"], ["🙎🏼‍♀️ Profil", "🏠 Doimiy manzillar"]])
+            .oneTime()
+            .resize()
+        })
+      }
+    }else {
+      if('text' in ctx.message) {
+        await ctx.replyWithHTML(`Ваше имя изменено на ${ctx.message.text}`,{
+          parse_mode:'HTML',
+          ...Markup.keyboard([["🚖 Вызвать такси 🙋‍♀️", "🚚 Доставка 🙋‍♀️"],["🙎🏼‍ профиль", "🏠 Постоянные адреса"]])
+            .oneTime()
+            .resize()
+        })
+      }
     }
   }
 }
