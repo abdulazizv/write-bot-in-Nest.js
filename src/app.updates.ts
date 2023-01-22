@@ -38,6 +38,15 @@ export class AppUpdate {
     return this.appService.registration(ctx,'RUS')
   }
 
+  @Hears('🙎🏼‍♀️ Profil')
+  async toProfilUz(@Ctx() ctx:Context) {
+    return this.appService.hearsProfil(ctx,'UZB')
+  }
+
+  @Hears('🙎🏼‍ профиль')
+  async toProfilRu(@Ctx() ctx:Context) {
+    return this.appService.hearsProfil(ctx,'RUS')
+  }
   @Action('defaultsave')
   async saveName(@Ctx() ctx:Context) {
     return this.appService.saveName(ctx);
@@ -47,6 +56,7 @@ export class AppUpdate {
   async defaultSavePhone(@Ctx() ctx:Context) {
     return this.appService.defaultSavePhone(ctx)
   }
+
   @On('message')
   async message(@Ctx() ctx:Context) {
     return this.appService.onMessage(ctx);

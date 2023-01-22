@@ -5,6 +5,7 @@ import { Context, Markup, Telegraf } from "telegraf";
 import { MyBotName } from "./app.constants";
 import { User } from "./models/user.model";
 import { mainmenu } from "./helpers/main_menu";
+import { profilPart } from "./helpers/profil_part";
 
 @Injectable()
 export class AppService {
@@ -38,15 +39,19 @@ export class AppService {
         }
       );
     } else {
-      await this.userRepository.update(
-        { last_state: "lang" },
-        { where: { user_id: String(ctx.from.id) } }
-      );
+      if(user.last_state != 'finish') {
+        await this.userRepository.update(
+          { last_state: "lang" },
+          { where: { user_id: String(ctx.from.id) } }
+        );
+      }
 
       await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
-      await ctx.reply(`Botga hush kelibsiz 👇`, {
-        parse_mode: "HTML",
-      });
+      if(user.user_lang == 'UZB') {
+        return mainmenu(ctx,'UZB')
+      } else {
+        return mainmenu(ctx,'RUS')
+      }
     }
   }
 
@@ -315,6 +320,14 @@ export class AppService {
       return mainmenu(ctx,'UZB')
     } else {
       return mainmenu(ctx,'RUS')
+    }
+  }
+
+  async hearsProfil(ctx:Context,lang:String) {
+    if(lang == 'UZB'){
+      return profilPart(ctx,'UZB')
+    } else {
+      return profilPart(ctx,'RUS')
     }
   }
 }
