@@ -61,6 +61,11 @@ export class AppUpdate {
     return this.appService.changeName(ctx)
   }
 
+  @Action('changephoneNumber')
+  async changePhoneNumber(@Ctx() ctx:Context) {
+    return this.appService.phoneNumber(ctx);
+  }
+
   @Action('cancelling')
   async cancellation(@Ctx() ctx:Context){
     return this.appService.cancel(ctx);
