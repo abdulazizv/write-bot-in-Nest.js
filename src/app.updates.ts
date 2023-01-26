@@ -10,7 +10,7 @@ export class AppUpdate {
   async onStart(@Ctx() ctx: Context) {
     return this.appService.start(ctx);
   }
-  
+
   @On('contact')
   async onContact(@Ctx() ctx: Context) {
     return this.appService.onContact(ctx);
@@ -98,6 +98,11 @@ export class AppUpdate {
   @Action('cancelling')
   async cancellation(@Ctx() ctx:Context){
     return this.appService.cancel(ctx);
+  }
+
+  @Action('contract')
+  async ruleContract(@Ctx() ctx:Context) {
+    return this.appService.ruleContract(ctx);
   }
 
   @On('message')

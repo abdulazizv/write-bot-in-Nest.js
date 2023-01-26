@@ -570,4 +570,27 @@ export class AppService {
       })
     }
   }
+
+  async ruleContract(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang == 'UZB') {
+      await ctx.reply('<b>Bu yerda «Foydalanuvchi shartnomasi» yoziladi</b>',{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩 Asosiy sahifa"])
+          .oneTime()
+          .resize()
+      })
+    } else {
+      await ctx.reply(`<b>"Пользовательское Соглашение" написана здесь</b>`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩‍🦱 Главная страница"])
+          .oneTime()
+          .resize()
+      })
+    }
+  }
 }
