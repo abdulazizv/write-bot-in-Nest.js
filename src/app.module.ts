@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppUpdate } from './app.updates';
 import { User } from './models/user.model';
+import { Driver } from "./models/driver.model";
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { User } from './models/user.model';
     ConfigModule.forRoot({
       envFilePath: `.env`,
     }),
-    SequelizeModule.forFeature([User,]),
+    SequelizeModule.forFeature([User,Driver]),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.POSTGRES_HOST,

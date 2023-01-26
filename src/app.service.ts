@@ -6,11 +6,13 @@ import { MyBotName } from "./app.constants";
 import { User } from "./models/user.model";
 import { mainmenu } from "./helpers/main_menu";
 import { profilPart } from "./helpers/profil_part";
+import { Driver } from "./models/driver.model";
 
 @Injectable()
 export class AppService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
+    @InjectModel(Driver) private driverRepository:typeof Driver,
     @InjectBot(MyBotName) private readonly bot: Telegraf<Context>
   ) {}
   async start(ctx: Context) {
@@ -637,6 +639,36 @@ export class AppService {
           .oneTime()
           .resize()
       })
+    }
+  }
+
+  async onDriver(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(!user) {
+      await ctx.replyWithHTML("<b>Lady Taxi xizmatining haydovchi rejimiga xush kelibsiz</b>")
+      await ctx.replyWithHTML("Haydovchi rejimiga o'tish uchun avval Mijoz rejimiga o'tib profilning Ism va Telefon ma'lumotlarini to'liq kiriting.")
+    } else {
+      await this.driverRepository.create({
+        user_id:`${user.user_id}`,
+        first_name:`${user.first_name}`,
+        last_name:`${user.last_name}`,
+        username: `${user.username}`,
+        user_lang:`${user.user_lang}`,
+        phone_number:`${user.phone_number}`
+      })
+      if(user.user_lang == 'UZB'){
+      await ctx.replyWithHTML("<b>Lady Taxi xizmatining haydovchi rejimiga xush kelibsiz !</b>")
+      await ctx.reply(`Lady Taxi xizmatida haydovchi sifatida ro'yxatdan o'tish uchun «Ro'yxatdan o'tish» tugmasini bosing.`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩🏼‍💻 Ro'yxatdan o'tish"])
+          .oneTime()
+          .resize()
+      })
+      }
     }
   }
 }

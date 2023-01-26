@@ -19,7 +19,11 @@ export class AppUpdate {
   async onStop(@Ctx() ctx: Context) {
     return this.appService.onStop(ctx);
   }
-
+  @Command('/driver')
+  async driverMode(@Ctx() ctx:Context) {
+    return this.appService.onDriver(ctx);
+  }
+  async
   @Hears("🇺🇿 O'zbek tili")
   async uzLang(@Ctx() ctx: Context) {
     return this.appService.langUz(ctx)
