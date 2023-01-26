@@ -466,23 +466,85 @@ export class AppService {
       }
     })
     if(user.user_lang === 'UZB') {
-      if('text' in ctx.message) {
         await ctx.replyWithHTML(`<b>Lady Taxy</b> bilan hammasi yanada oson ! `, {
           parse_mode: 'HTML',
           ...Markup.keyboard([["🚖 Taksi chaqirish 🙋‍♀️", "🚚 Yetkazib berish 🙋‍♀️"], ["🙎🏼‍♀️ Profil", "🏠 Doimiy manzillar"]])
             .oneTime()
             .resize()
         })
-      }
     }else {
-      if('text' in ctx.message) {
         await ctx.replyWithHTML(`С <b>Lady Taxy</b> все проще! `,{
           parse_mode:'HTML',
           ...Markup.keyboard([["🚖 Вызвать такси 🙋‍♀️", "🚚 Доставка 🙋‍♀️"],["🙎🏼‍ профиль", "🏠 Постоянные адреса"]])
             .oneTime()
             .resize()
         })
+    }
+  }
+
+  async changeLanguage(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
       }
+    })
+    await ctx.reply('<b>Tilni tanlang/Выберите язык</b>',{
+      parse_mode:'HTML',
+      ...Markup.inlineKeyboard([
+        [Markup.button.callback(`🇺🇿 O'zbek tili`,`uzblang`)],
+        [Markup.button.callback(`🇷🇺 Русский язык`,`rulang`)],
+        [Markup.button.callback(`🙅‍♀️ Bekor qilish/Отмена`,`cancelling`)]
+      ])
+    })
+  }
+
+  async changeRuLang(ctx: Context) {
+    await this.userRepository.update({
+      user_lang:'RUS'
+    },{
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    });
+    await ctx.reply("<b>Язык изменен!</b>",{
+      parse_mode:'HTML',
+      ...Markup.keyboard(["👩‍🦱 Главная страница"])
+        .oneTime()
+        .resize()
+    })
+
+  }
+  async changeUzLang(ctx:Context) {
+    await this.userRepository.update({
+      user_lang:'UZB'
+    },{
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    await ctx.reply("<b>Til o'zgartirildi</b>",{
+      parse_mode:'HTML',
+      ...Markup.keyboard(["👩 Asosiy sahifa"])
+        .oneTime()
+        .resize()
+    })
+  }
+
+  async toMainMenu(ctx:Context, lang:String) {
+    if(lang === 'UZB'){
+      await ctx.reply(`<b>🌹 Lady Taxy</b> to'gri tanlov`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard([["🚖 Taksi chaqirish 🙋‍♀️", "🚚 Yetkazib berish 🙋‍♀️"], ["🙎🏼‍♀️ Profil", "🏠 Doimiy manzillar"]])
+          .oneTime()
+          .resize()
+      })
+    } else {
+      await ctx.reply(`<b>🌹 Lady Taxy </b> правильный выбор`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard([["🚖 Вызвать такси 🙋‍♀️", "🚚 Доставка 🙋‍♀️"],["🙎🏼‍ профиль", "🏠 Постоянные адреса"]])
+          .oneTime()
+          .resize()
+      })
     }
   }
 }

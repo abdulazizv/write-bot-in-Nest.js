@@ -47,6 +47,16 @@ export class AppUpdate {
   async toProfilRu(@Ctx() ctx:Context) {
     return this.appService.hearsProfil(ctx,'RUS')
   }
+
+  @Hears('👩 Asosiy sahifa')
+  async toMainPageUz(@Ctx() ctx:Context){
+    return this.appService.toMainMenu(ctx,'UZB');
+  }
+
+  @Hears('👩‍🦱 Главная страница')
+  async toMainPageRu(@Ctx() ctx:Context){
+    return this.appService.toMainMenu(ctx,'RUS')
+  }
   @Action('defaultsave')
   async saveName(@Ctx() ctx:Context) {
     return this.appService.saveName(ctx);
@@ -54,18 +64,31 @@ export class AppUpdate {
 
   @Action('savedefaultphone')
   async defaultSavePhone(@Ctx() ctx:Context) {
-    return this.appService.defaultSavePhone(ctx)
+    return this.appService.defaultSavePhone(ctx);
   }
   @Action('changename')
   async changeName(@Ctx() ctx:Context) {
-    return this.appService.changeName(ctx)
+    return this.appService.changeName(ctx);
   }
 
+  @Action('rulang')
+  async changeRuLang(@Ctx() ctx:Context) {
+    return this.appService.changeRuLang(ctx);
+  }
+
+  @Action('uzblang')
+  changeUzLang(@Ctx() ctx:Context) {
+    return this.appService.changeUzLang(ctx)
+  }
   @Action('changephoneNumber')
   async changePhoneNumber(@Ctx() ctx:Context) {
     return this.appService.phoneNumber(ctx);
   }
 
+  @Action('changelanguage')
+  async changeLanguage(@Ctx() ctx:Context) {
+    return this.appService.changeLanguage(ctx)
+  }
   @Action('cancelling')
   async cancellation(@Ctx() ctx:Context){
     return this.appService.cancel(ctx);
