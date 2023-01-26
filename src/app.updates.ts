@@ -10,6 +10,7 @@ export class AppUpdate {
   async onStart(@Ctx() ctx: Context) {
     return this.appService.start(ctx);
   }
+  
   @On('contact')
   async onContact(@Ctx() ctx: Context) {
     return this.appService.onContact(ctx);
@@ -57,6 +58,7 @@ export class AppUpdate {
   async toMainPageRu(@Ctx() ctx:Context){
     return this.appService.toMainMenu(ctx,'RUS')
   }
+
   @Action('defaultsave')
   async saveName(@Ctx() ctx:Context) {
     return this.appService.saveName(ctx);
@@ -76,6 +78,10 @@ export class AppUpdate {
     return this.appService.changeRuLang(ctx);
   }
 
+  @Action('ruleCallTaxy')
+  async ruleTaxy(@Ctx() ctx:Context) {
+    return this.appService.ruleCallTaxy(ctx)
+  }
   @Action('uzblang')
   changeUzLang(@Ctx() ctx:Context) {
     return this.appService.changeUzLang(ctx)

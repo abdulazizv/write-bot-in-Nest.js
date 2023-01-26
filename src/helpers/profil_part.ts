@@ -9,7 +9,7 @@ export async function profilPart(ctx:Context,lang:String) {
         [Markup.button.callback("📱 Telefon raqamni o'zgartirish", "changephoneNumber")],
         [Markup.button.callback("🏘 Doimiy manzillarini o'zgartirish", 'changeadress')],
         [Markup.button.callback("🌐 Tilni o'zgartirish", 'changelanguage')],
-        [Markup.button.callback('👩‍🦰 Taksi chiqarish tartibi', 'ruleCallTaxy')],
+        [Markup.button.callback('👩‍🦰 Taksi chaqirish tartibi', 'ruleCallTaxy')],
         [Markup.button.callback('📄 Foydalanuvchi shartnomasi', 'contract')],
         [Markup.button.callback("☎️ Lady taxi xizmatiga bog'lanish", 'connectWithStaff')],
         [Markup.button.callback('🙎🏼‍♀️ Asosiy sahifa', 'mainpage')]

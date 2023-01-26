@@ -547,4 +547,27 @@ export class AppService {
       })
     }
   }
+
+  async ruleCallTaxy(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang == 'UZB') {
+      await ctx.reply('<b>Bu yerda «Taksi chaqirish tartibi» yoziladi</b>',{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩 Asosiy sahifa"])
+          .oneTime()
+          .resize()
+      })
+    } else {
+      await ctx.reply(`<b>"Процедура вызова такси" написана здесь</b>`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩‍🦱 Главная страница"])
+          .oneTime()
+          .resize()
+      })
+    }
+  }
 }
