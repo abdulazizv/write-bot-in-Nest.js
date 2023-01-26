@@ -67,3 +67,13 @@ id user_id phone_number first_name
 last_name username last_state user_lang work_phone_number
 car_model car_number car_color car_photo work_status
 last_lat last_lon last_state  createdAt updatedAt
+
+
+
+new tasks :
+
+--- Regex for number
+
+--- driver
+
+--- frontend

@@ -101,7 +101,7 @@ export class AppService {
       await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
       await ctx.reply(`<b>Sizga murojaat qilish uchun quyidagi ismingizni tanlang:</b>`, {
         parse_mode: "HTML",
-        ...Markup.inlineKeyboard([Markup.button.callback(`Men ${ctx.from.username} ismini tanlayman`,'defaultsave')])
+        ...Markup.inlineKeyboard([Markup.button.callback(`Men ${ctx.from.first_name} ismini tanlayman`,'defaultsave')])
       });
       await ctx.replyWithHTML('Yoki haqiqiy ismingizni kiriting:')
     } else {
@@ -130,7 +130,7 @@ export class AppService {
       await this.bot.telegram.sendChatAction(ctx.from.id, "typing");
       await ctx.reply(`<b>Пожалуйста, выберите свое имя ниже, чтобы связаться с вами:</b>`, {
         parse_mode: "HTML",
-        ...Markup.inlineKeyboard([Markup.button.callback(`Я "${ctx.from.username}" выбираю имя`,'defaultsave')])
+        ...Markup.inlineKeyboard([Markup.button.callback(`Я "${ctx.from.first_name}" выбираю имя`,'defaultsave')])
       });
       await ctx.replyWithHTML('Или введите свое настоящее имя:')
     }
@@ -588,6 +588,52 @@ export class AppService {
       await ctx.reply(`<b>"Пользовательское Соглашение" написана здесь</b>`,{
         parse_mode:'HTML',
         ...Markup.keyboard(["👩‍🦱 Главная страница"])
+          .oneTime()
+          .resize()
+      })
+    }
+  }
+
+  async connectToStuff(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang == 'UZB') {
+      await ctx.reply('<b>Murojaat uchun </b>@abdulazizvr',{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩 Asosiy sahifa"])
+          .oneTime()
+          .resize()
+      })
+    } else {
+      await ctx.reply('<b>для связи </b> @abdulazizvr',{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["👩‍🦱 Главная страница"])
+          .oneTime()
+          .resize()
+      })
+    }
+  }
+
+  async mainPage(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang == 'UZB') {
+      await ctx.reply(`<b>🌹 Lady Taxy</b> to'gri tanlov`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard([["🚖 Taksi chaqirish 🙋‍♀️", "🚚 Yetkazib berish 🙋‍♀️"], ["🙎🏼‍♀️ Profil", "🏠 Doimiy manzillar"]])
+          .oneTime()
+          .resize()
+      })
+    } else {
+      await ctx.reply(`<b>🌹 Lady Taxy </b> правильный выбор`,{
+        parse_mode:'HTML',
+        ...Markup.keyboard([["🚖 Вызвать такси 🙋‍♀️", "🚚 Доставка 🙋‍♀️"],["🙎🏼‍ профиль", "🏠 Постоянные адреса"]])
           .oneTime()
           .resize()
       })

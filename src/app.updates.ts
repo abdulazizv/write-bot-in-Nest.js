@@ -105,6 +105,15 @@ export class AppUpdate {
     return this.appService.ruleContract(ctx);
   }
 
+  @Action('connectWithStaff')
+  async connectStaff(@Ctx() ctx:Context) {
+    return this.appService.connectToStuff(ctx);
+  }
+
+  @Action('mainpage')
+  async mainPage(@Ctx() ctx:Context) {
+    return this.appService.mainPage(ctx);
+  }
   @On('message')
   async message(@Ctx() ctx:Context) {
     return this.appService.onMessage(ctx);
