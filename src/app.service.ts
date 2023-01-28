@@ -421,17 +421,35 @@ export class AppService {
             await ctx.reply("Ваше техническое разрешение или номер транспортного средства неверны")
           }
         }
-      await this.driverRepository.update({
-        last_state: 'non-active',
-        car_model: `${data.pModel}`,
-        car_color: `${data.pVehicleColor}`,
-      }, {
-        where: {
-          user_id: `${ctx.from.id}`
+        if(data) {
+          await this.driverRepository.update({
+            last_state: 'non-active',
+            car_model: `${data.pModel}`,
+            car_color: `${data.pVehicleColor}`,
+            car_year: `${data.pYear}`
+          }, {
+            where: {
+              user_id: `${ctx.from.id}`
+            }
+          })
+          await this.userRepository.update({
+            last_state:'non-active'
+          },{
+            where:{
+              user_id:`${ctx.from.id}`
+            }
+          })
+        } else {
+          console.log("error");
+        }
+      }
+      const newDriver = await this.driverRepository.findOne({
+        where:{
+          user_id:`${ctx.from.id}`
         }
       })
-    }
-      await ctx.reply("OK")
+      await ctx.telegram.sendMessage(`${process.env.ADMIN_ID}`,`${newDriver.first_name}\n ${newDriver.last_name}\n ${newDriver.car_model}\n ${newDriver.car_number}\n ${newDriver.car_year}\n ${newDriver.user_id}`);
+      await ctx.replyWithHTML("Ma'lumotlaringiz <b>admin</b> ga yetkazildi. Admin ruxsat berishi bilan sizga activelik taqdim qilinadi")
     }
   }
   async defaultSavePhone(ctx:Context){

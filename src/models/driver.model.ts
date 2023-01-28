@@ -96,6 +96,10 @@ export class Driver extends Model<Driver, DriverAttr> {
   })
   car_color: string;
   @Column({
+    type:DataType.STRING
+  })
+  car_year:string;
+  @Column({
     type: DataType.STRING,
   })
   car_photo: string;
