@@ -26,6 +26,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/sequelize": "^9.0.0",
+    "axios": "^1.2.5",
     "config": "^3.3.8",
     "dotenv": "^16.0.3",
     "nestjs-telegraf": "^2.6.3",

@@ -19,7 +19,7 @@ export class AppUpdate {
   async onStop(@Ctx() ctx: Context) {
     return this.appService.onStop(ctx);
   }
-  @Command('/driver')
+  @Command('driver')
   async driverMode(@Ctx() ctx:Context) {
     return this.appService.onDriver(ctx);
   }
@@ -63,6 +63,15 @@ export class AppUpdate {
     return this.appService.toMainMenu(ctx,'RUS')
   }
 
+  @Hears("👩🏼‍💻 Ro'yxatdan o'tish")
+  async registrationDriver(@Ctx() ctx:Context) {
+    return this.appService.registrationDriver(ctx,'UZB');
+  }
+
+  @Hears("👩🏼‍💻 Зарегистрироваться")
+  async registrationDriverRu(@Ctx() ctx:Context) {
+    return this.appService.registrationDriver(ctx,'RUS');
+  }
   @Action('defaultsave')
   async saveName(@Ctx() ctx:Context) {
     return this.appService.saveName(ctx);

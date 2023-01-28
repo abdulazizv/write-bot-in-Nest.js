@@ -15,6 +15,7 @@ interface DriverAttr {
   car_number: string;
   car_color: string;
   car_photo: string;
+  car_year:string;
   last_lat: string;
   last_lon: string;
 }

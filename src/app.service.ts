@@ -7,6 +7,7 @@ import { User } from "./models/user.model";
 import { mainmenu } from "./helpers/main_menu";
 import { profilPart } from "./helpers/profil_part";
 import { Driver } from "./models/driver.model";
+import axios from "axios";
 
 @Injectable()
 export class AppService {
@@ -263,6 +264,11 @@ export class AppService {
         user_id:`${ctx.from.id}`
       }
     })
+    const driver = await this.driverRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
     if(user.last_state === "real_name") {
       if('text' in ctx.message) {
         await this.userRepository.update({
@@ -363,7 +369,7 @@ export class AppService {
               .resize()
           })
         }
-      }  else {
+      } else {
       if('text' in ctx.message) {
         await ctx.replyWithHTML(`ваш номер телефона изменился на ${ctx.message.text}`,{
           parse_mode:'HTML',
@@ -373,6 +379,59 @@ export class AppService {
         })
       }
     }
+    } else if(user.last_state == 'car_number') {
+      if('text' in ctx.message) {
+        await this.driverRepository.update({
+          car_number:`${ctx.message.text}`
+        },{
+          where: {
+            user_id:`${ctx.from.id}`
+          }
+        })
+        await this.userRepository.update({
+          last_state:'tex-passport'
+        },{
+          where:{
+            user_id:`${ctx.from.id}`
+          }
+        })
+        if(user.user_lang == 'UZB') {
+          await ctx.replyWithHTML("Mashinaning tex-passporti raqamini kiriting !")
+        } else {
+          await ctx.replyWithHTML("Введите номер технического паспорта автомобиля !")
+        }
+      } else {
+        if(user.user_lang == "UZB"){
+          return mainmenu(ctx,'UZB');
+        } else {
+          return mainmenu(ctx,'RUS')
+        }
+      }
+    } else if(user.last_state == 'tex-passport') {
+      let data;
+      if ('text' in ctx.message) {
+        try {
+          data = await (await axios.get(
+            `https://api-dtp.yhxbb.uz/api/egov/open_data/info_car?format=json&plate_number=${driver.car_number}&tech_pass=${ctx.message.text}`
+          )).data;
+        } catch (error) {
+          if(user.user_lang == 'UZB') {
+            await ctx.reply('Texnik ruxsatnomangiz yoki mashina raqamingiz xato')
+          } else {
+            await ctx.reply("Ваше техническое разрешение или номер транспортного средства неверны")
+          }
+        }
+      await this.driverRepository.update({
+        last_state: 'non-active',
+        car_model: `${data.pModel}`,
+        car_color: `${data.pVehicleColor}`,
+      }, {
+        where: {
+          user_id: `${ctx.from.id}`
+        }
+      })
+    }
+      await ctx.reply("OK")
     }
   }
   async defaultSavePhone(ctx:Context){
@@ -661,14 +720,41 @@ export class AppService {
         phone_number:`${user.phone_number}`
       })
       if(user.user_lang == 'UZB'){
-      await ctx.replyWithHTML("<b>Lady Taxi xizmatining haydovchi rejimiga xush kelibsiz !</b>")
-      await ctx.reply(`Lady Taxi xizmatida haydovchi sifatida ro'yxatdan o'tish uchun «Ro'yxatdan o'tish» tugmasini bosing.`,{
+      await ctx.reply("Lady Taxi xizmatining haydovchi rejimiga xush kelibsiz !")
+      await ctx.reply("Lady Taxi xizmatida haydovchi sifatida ro'yxatdan o'tish uchun «Ro'yxatdan o'tish» tugmasini bosing.",{
         parse_mode:'HTML',
         ...Markup.keyboard(["👩🏼‍💻 Ro'yxatdan o'tish"])
           .oneTime()
           .resize()
       })
+      } else {
+        await ctx.reply('Добро пожаловать в режим Таксист!')
+        await ctx.reply("Чтобы зарегистрироваться в качестве водителя в сервисе Lady Taxi, нажмите кнопку «Зарегистрироваться».",{
+          parse_mode:'HTML',
+          ...Markup.keyboard(["👩🏼‍💻 Зарегистрироваться"])
+            .oneTime()
+            .resize()
+        })
       }
+    }
+  }
+
+  async registrationDriver(ctx:Context,lang:String) {
+    await this.userRepository.update({
+      last_state:'car_number'
+    },{
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(lang == 'UZB') {
+      await ctx.reply('Avtomobil raqamini kiriting',{
+        parse_mode:'HTML'
+      })
+    } else {
+      await ctx.reply('Введите номер автомобиля',{
+        parse_mode:'HTML'
+      })
     }
   }
 }
