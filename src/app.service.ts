@@ -448,7 +448,10 @@ export class AppService {
           user_id:`${ctx.from.id}`
         }
       })
-      await ctx.telegram.sendMessage(`${process.env.ADMIN_ID}`,`${newDriver.first_name}\n ${newDriver.last_name}\n ${newDriver.car_model}\n ${newDriver.car_number}\n ${newDriver.car_year}\n ${newDriver.user_id}`);
+      await ctx.telegram.sendMessage(`${process.env.ADMIN_ID}`,`${newDriver.first_name}\n ${newDriver.last_name}\n ${newDriver.car_model}\n ${newDriver.car_number}\n ${newDriver.car_year}\n ${newDriver.user_id}`,{
+        parse_mode:'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback("✅ Tasdiqlayman",`verify=${ctx.from.id}`),Markup.button.callback("❌ Rad qilinsin",`otmen=${ctx.from.id}`)])
+      });
       await ctx.replyWithHTML("Ma'lumotlaringiz <b>admin</b> ga yetkazildi. Admin ruxsat berishi bilan sizga activelik taqdim qilinadi")
     }
   }
@@ -772,6 +775,31 @@ export class AppService {
     } else {
       await ctx.reply('Введите номер автомобиля',{
         parse_mode:'HTML'
+      })
+    }
+  }
+
+  async verifyDriver(ctx:Context) {
+    let index;
+    if('match' in ctx) {
+      const message = ctx.match[0]
+      index = message.split('=')[1]
+    }
+    const idUser = await this.driverRepository.findOne({
+      where: {
+        user_id:`${index}`
+      }
+    })
+    console.log(typeof index);
+    if(idUser.user_lang == 'UZB') {
+      await ctx.telegram.sendMessage(`${index}`, "Admin sizga ruxsat berdi. Statusingizni tekshirib oling !", {
+        parse_mode:'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback("☑️ Statusni tekshirish","checkDriverStatus")])
+      })
+    } else {
+      await ctx.telegram.sendMessage(`${index}`, "Админ дал вам разрешение. Проверьте свой статус !", {
+        parse_mode:'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback("☑️ Проверь состояние","checkDriverStatus")])
       })
     }
   }

@@ -91,6 +91,10 @@ export class AppUpdate {
     return this.appService.changeRuLang(ctx);
   }
 
+  @Action(/^(verify=\d+)/)
+  async verifyDriver(@Ctx() ctx:Context) {
+    return this.appService.verifyDriver(ctx);
+  }
   @Action('ruleCallTaxy')
   async ruleTaxy(@Ctx() ctx:Context) {
     return this.appService.ruleCallTaxy(ctx)
