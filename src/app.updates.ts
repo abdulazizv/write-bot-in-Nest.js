@@ -72,6 +72,35 @@ export class AppUpdate {
   async registrationDriverRu(@Ctx() ctx:Context) {
     return this.appService.registrationDriver(ctx,'RUS');
   }
+
+  @Hears('🚕 Hozirdan ishlayman !')
+  async workStatusTrue(@Ctx() ctx:Context) {
+    return this.appService.workStatusTrue(ctx,'UZB');
+  }
+  @Hears('🛋 Hozircha dam olaman')
+  async workStatusFalse(@Ctx() ctx:Context) {
+    return this.appService.workStatusFalse(ctx,'UZB');
+  }
+
+  @Hears('🚕 Я сейчас работаю !')
+  async workStatusTrueRU(@Ctx() ctx:Context) {
+    return this.appService.workStatusTrue(ctx,'RUS');
+  }
+
+  @Hears('🛋 Я пока отдохну')
+  async workStatusFalseRU(@Ctx() ctx:Context) {
+    return this.appService.workStatusFalse(ctx,'RUS');
+  }
+
+  @Hears("⛔️ Ishni to'xtatish")
+  async stopWorking(@Ctx() ctx:Context) {
+    return this.appService.workStatusFalse(ctx,'UZB');
+  }
+
+  @Hears('⛔️ Остановить работу')
+  async stopWorkingRU(@Ctx() ctx:Context) {
+    return this.appService.workStatusFalse(ctx,'RUS');
+  }
   @Action('defaultsave')
   async saveName(@Ctx() ctx:Context) {
     return this.appService.saveName(ctx);
