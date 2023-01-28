@@ -415,13 +415,13 @@ export class AppService {
             `https://api-dtp.yhxbb.uz/api/egov/open_data/info_car?format=json&plate_number=${driver.car_number}&tech_pass=${ctx.message.text}`
           )).data;
         } catch (error) {
-          if(user.user_lang == 'UZB') {
+          if (user.user_lang == 'UZB') {
             await ctx.reply('Texnik ruxsatnomangiz yoki mashina raqamingiz xato')
           } else {
             await ctx.reply("Ваше техническое разрешение или номер транспортного средства неверны")
           }
         }
-        if(data) {
+        if (data) {
           await this.driverRepository.update({
             last_state: 'non-active',
             car_model: `${data.pModel}`,
@@ -433,10 +433,10 @@ export class AppService {
             }
           })
           await this.userRepository.update({
-            last_state:'non-active'
-          },{
-            where:{
-              user_id:`${ctx.from.id}`
+            last_state: 'non-active'
+          }, {
+            where: {
+              user_id: `${ctx.from.id}`
             }
           })
         } else {
@@ -444,15 +444,19 @@ export class AppService {
         }
       }
       const newDriver = await this.driverRepository.findOne({
-        where:{
-          user_id:`${ctx.from.id}`
+        where: {
+          user_id: `${ctx.from.id}`
         }
       })
-      await ctx.telegram.sendMessage(`${process.env.ADMIN_ID}`,`${newDriver.first_name}\n ${newDriver.last_name}\n ${newDriver.car_model}\n ${newDriver.car_number}\n ${newDriver.car_year}\n ${newDriver.user_id}`,{
-        parse_mode:'HTML',
-        ...Markup.inlineKeyboard([Markup.button.callback("✅ Tasdiqlayman",`verify=${ctx.from.id}`),Markup.button.callback("❌ Rad qilinsin",`otmen=${ctx.from.id}`)])
+      await ctx.telegram.sendMessage(`${process.env.ADMIN_ID}`, `${newDriver.first_name}\n ${newDriver.last_name}\n ${newDriver.car_model}\n ${newDriver.car_number}\n ${newDriver.car_year}\n ${newDriver.user_id}`, {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([Markup.button.callback("✅ Tasdiqlayman", `verify=${ctx.from.id}`), Markup.button.callback("❌ Rad qilinsin", `otmen=${ctx.from.id}`)])
       });
-      await ctx.replyWithHTML("Ma'lumotlaringiz <b>admin</b> ga yetkazildi. Admin ruxsat berishi bilan sizga activelik taqdim qilinadi")
+      if (user.user_lang == 'UZB') {
+        await ctx.replyWithHTML("Ma'lumotlaringiz <b>admin</b> ga yetkazildi. Admin ruxsat berishi bilan sizga activelik taqdim qilinadi")
+      } else {
+        await ctx.replyWithHTML("Ваша информация была отправлена <b>admin</b>. Активность будет предоставлена вам, как только администратор одобрит ее.")
+      }
     }
   }
   async defaultSavePhone(ctx:Context){
@@ -785,12 +789,11 @@ export class AppService {
       const message = ctx.match[0]
       index = message.split('=')[1]
     }
-    const idUser = await this.driverRepository.findOne({
+    const idUser = await this.userRepository.findOne({
       where: {
         user_id:`${index}`
       }
     })
-    console.log(typeof index);
     if(idUser.user_lang == 'UZB') {
       await ctx.telegram.sendMessage(`${index}`, "Admin sizga ruxsat berdi. Statusingizni tekshirib oling !", {
         parse_mode:'HTML',
@@ -800,6 +803,47 @@ export class AppService {
       await ctx.telegram.sendMessage(`${index}`, "Админ дал вам разрешение. Проверьте свой статус !", {
         parse_mode:'HTML',
         ...Markup.inlineKeyboard([Markup.button.callback("☑️ Проверь состояние","checkDriverStatus")])
+      })
+    }
+  }
+
+  async notAccesDriver(ctx:Context) {
+    let index;
+    if ('match' in ctx) {
+      const message = ctx.match[0]
+      index = message.split('=')[1]
+    }
+    const idUser = await this.userRepository.findOne({
+      where: {
+        user_id: `${index}`
+      }
+    })
+    if (idUser.user_lang == 'UZB') {
+      await ctx.telegram.sendMessage(`${index}`, "Afsuski admin sizga ruxsat bermadi, Ma'lum muddatdan so'ng qayta urinib ko'ring ! ")
+    } else {
+      await ctx.telegram.sendMessage(`${index}`,'К сожалению, админ не разрешил, попробуйте еще раз через определенный промежуток времени!')
+    }
+  }
+
+  async checkDriverStatus(ctx:Context) {
+    const user = await this.userRepository.findOne({
+      where:{
+        user_id:`${ctx.from.id}`
+      }
+    })
+    if(user.user_lang == 'UZB'){
+      await ctx.reply("Tabriklaymiz ! Siz <b>Lady Taxy</b> haydovchilari safiga qo'shildingiz !\n Hozirdan ishni boshlashingiz mumkin !",{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["🚕 Hozirdan ishlayman !","🛋 Hozircha dam olaman"])
+          .oneTime()
+          .resize()
+      })
+    } else {
+      await ctx.reply("Поздравляем! Вы пополнили ряды водителей <b>Lady Taxi</b>!\n Вы можете начать работать прямо сейчас!",{
+        parse_mode:'HTML',
+        ...Markup.keyboard(["🚕 Я сейчас работаю !","🛋 Я пока отдохну"])
+          .oneTime()
+          .resize()
       })
     }
   }

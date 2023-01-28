@@ -95,6 +95,11 @@ export class AppUpdate {
   async verifyDriver(@Ctx() ctx:Context) {
     return this.appService.verifyDriver(ctx);
   }
+
+  @Action(/^(otmen=\d+)/)
+  async notAccessDriver(@Ctx() ctx:Context) {
+    return this.appService.notAccesDriver(ctx);
+  }
   @Action('ruleCallTaxy')
   async ruleTaxy(@Ctx() ctx:Context) {
     return this.appService.ruleCallTaxy(ctx)
@@ -130,6 +135,11 @@ export class AppUpdate {
   @Action('mainpage')
   async mainPage(@Ctx() ctx:Context) {
     return this.appService.mainPage(ctx);
+  }
+
+  @Action('checkDriverStatus')
+  async checkDriverStatus(@Ctx() ctx: Context) {
+    return this.appService.checkDriverStatus(ctx)
   }
   @On('message')
   async message(@Ctx() ctx:Context) {
